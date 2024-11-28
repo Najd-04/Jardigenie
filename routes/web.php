@@ -1,11 +1,21 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Route pour la page d'accueil, qui affiche la liste des articles
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+// Route pour la page d'accueil qui affiche la liste des articles
 Route::get('/', [ArticleController::class, 'index'])->name('home');
-
-// Route pour gérer les articles (CRUD)
+// Routes pour la gestion des articles (CRUD)
 Route::resource('articles', ArticleController::class);
-
+require __DIR__ . '/auth.php';
